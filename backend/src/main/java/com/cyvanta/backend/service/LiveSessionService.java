@@ -6,7 +6,7 @@ import com.cyvanta.backend.models.Course;
 import com.cyvanta.backend.models.LiveSession;
 import com.cyvanta.backend.repositories.CourseRepository;
 import com.cyvanta.backend.repositories.LiveSessionRepository;
-import com.cyvanta.backend.services.JitsiService;
+import com.cyvanta.backend.service.JitsiService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

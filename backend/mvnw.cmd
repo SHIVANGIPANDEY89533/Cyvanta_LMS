@@ -27,6 +27,13 @@
 @REM   MVNW_VERBOSE - true: enable verbose log; others: silence the output
 @REM ----------------------------------------------------------------------------
 
+if "%JAVA_HOME%" == "" (
+  for /f "tokens=2*" %%A in ('reg query "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment" /v JAVA_HOME 2^>nul') do set "JAVA_HOME=%%B"
+)
+if "%JAVA_HOME%" == "" (
+  for /f "tokens=2*" %%A in ('reg query "HKCU\Environment" /v JAVA_HOME 2^>nul') do set "JAVA_HOME=%%B"
+)
+
 @IF "%__MVNW_ARG0_NAME__%"=="" (SET __MVNW_ARG0_NAME__=%~nx0)
 @SET __MVNW_CMD__=
 @SET __MVNW_ERROR__=
