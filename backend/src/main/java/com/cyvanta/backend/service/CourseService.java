@@ -55,4 +55,10 @@ public class CourseService {
         return courseRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found with id: " + id));
     }
+
+    public void deleteCourse(String id) {
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Course not found with id: " + id));
+        courseRepository.delete(course);
+    }
 }

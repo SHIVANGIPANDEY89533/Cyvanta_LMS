@@ -21,26 +21,32 @@ const Login = () => {
         password: password.trim()
       });
       
-      const { token, role } = response.data;
+      const { token, role: rawRole, email: responseEmail } = response.data;
+      const roleText = typeof rawRole === 'string'
+        ? rawRole
+        : rawRole?.name || rawRole?.authority || '';
+      const normalizedRole = roleText
+        ? roleText.toUpperCase().replace(/^ROLE_/, '')
+        : 'STUDENT';
       
-      // Enforce that the user is logging into the correct panel
-      if (loginType === 'admin' && role !== 'ADMIN') {
-        setError('Access Denied: You do not have Admin privileges.');
+      if (loginType === 'admin' && normalizedRole !== 'ADMIN') {
+        const actualRole = roleText || 'unknown';
+        setError(`Access Denied: Admin access requires ADMIN privileges. Your role: ${actualRole}`);
         setLoading(false);
         return;
       }
       
-      if (loginType === 'student' && role === 'ADMIN') {
+      if (loginType === 'student' && normalizedRole === 'ADMIN') {
         setError('Please use the Admin Panel to log in.');
         setLoading(false);
         return;
       }
 
       localStorage.setItem('token', token);
-      localStorage.setItem('userRole', role);
-      localStorage.setItem('userEmail', email);
+      localStorage.setItem('userRole', normalizedRole);
+      localStorage.setItem('userEmail', responseEmail || email);
       
-      if (role === 'ADMIN') {
+      if (normalizedRole === 'ADMIN') {
         navigate('/admin');
       } else {
         navigate('/student');

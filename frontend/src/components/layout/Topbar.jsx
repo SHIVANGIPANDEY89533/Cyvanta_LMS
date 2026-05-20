@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 const Topbar = () => {
   const navigate = useNavigate();
   
-  const role = localStorage.getItem('userRole');
+  const storedRole = localStorage.getItem('userRole');
+  const role = storedRole ? storedRole.toString().toUpperCase().replace(/^ROLE_/, '') : 'STUDENT';
   const email = localStorage.getItem('userEmail') || 'User';
 
   const handleLogout = () => {

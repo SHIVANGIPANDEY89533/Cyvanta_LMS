@@ -78,6 +78,14 @@ public class DataSeeder implements CommandLineRunner {
             return userRepository.save(newAdmin);
         });
 
+        if (admin.getRole() == null || !"ADMIN".equals(admin.getRole().getName())) {
+            admin.setRole(adminRole);
+            if (admin.getPassword() == null || !(admin.getPassword().startsWith("$2a$") || admin.getPassword().startsWith("$2b$") || admin.getPassword().startsWith("$2y$"))) {
+                admin.setPassword(passwordEncoder.encode("admin123"));
+            }
+            userRepository.save(admin);
+        }
+
         User student = userRepository.findByEmail("student@cyvanta.com").orElseGet(() -> {
             User newStudent = new User();
             newStudent.setName("Demo Student");
@@ -88,6 +96,14 @@ public class DataSeeder implements CommandLineRunner {
             newStudent.setCreatedAt(LocalDateTime.now());
             return userRepository.save(newStudent);
         });
+
+        if (student.getRole() == null || !"STUDENT".equals(student.getRole().getName())) {
+            student.setRole(studentRole);
+            if (student.getPassword() == null || !(student.getPassword().startsWith("$2a$") || student.getPassword().startsWith("$2b$") || student.getPassword().startsWith("$2y$"))) {
+                student.setPassword(passwordEncoder.encode("student123"));
+            }
+            userRepository.save(student);
+        }
 
         if (courseRepository.count() == 0) {
             Course course = new Course();

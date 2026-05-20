@@ -42,6 +42,11 @@ const Courses = () => {
             <h3>All Published Courses</h3>
             <p>Showing {courses.length} courses</p>
           </div>
+          <div>
+            {localStorage.getItem('userRole') === 'ADMIN' && (
+              <button className="btn primary" onClick={() => navigate('/admin')}>Add Course</button>
+            )}
+          </div>
         </div>
         
         <div className="courses-grid">

@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from '../components/layout/MainLayout';
 import StudentDashboard from '../pages/student/Dashboard';
 import AdminDashboard from '../pages/admin/Dashboard';
+import ManageUsers from '../pages/admin/ManageUsers';
 import Login from '../pages/auth/Login';
 import Profile from '../pages/student/Profile';
 import LiveClass from '../pages/student/LiveClass';
@@ -28,6 +29,7 @@ const AppRoutes = () => {
         
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin/users" element={<ManageUsers />} />
       </Route>
     </Routes>
   );

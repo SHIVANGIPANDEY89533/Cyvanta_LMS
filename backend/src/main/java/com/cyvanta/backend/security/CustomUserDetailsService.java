@@ -1,4 +1,4 @@
-package com.cyvanta.backend.service;
+package com.cyvanta.backend.security;
 
 import com.cyvanta.backend.models.User;
 import com.cyvanta.backend.repositories.UserRepository;

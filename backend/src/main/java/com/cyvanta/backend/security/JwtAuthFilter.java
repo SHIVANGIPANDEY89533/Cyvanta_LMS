@@ -1,6 +1,6 @@
 package com.cyvanta.backend.security;
 
-import com.cyvanta.backend.service.CustomUserDetailsService;
+import com.cyvanta.backend.security.CustomUserDetailsService;
 import com.cyvanta.backend.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

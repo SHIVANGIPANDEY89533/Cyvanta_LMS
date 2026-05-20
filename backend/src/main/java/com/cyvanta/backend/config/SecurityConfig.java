@@ -1,7 +1,7 @@
 package com.cyvanta.backend.config;
 
 import com.cyvanta.backend.security.JwtAuthFilter;
-import com.cyvanta.backend.service.CustomUserDetailsService;
+import com.cyvanta.backend.security.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
