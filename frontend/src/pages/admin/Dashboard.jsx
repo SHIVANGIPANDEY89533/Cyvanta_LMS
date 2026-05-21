@@ -27,6 +27,8 @@ const AdminDashboard = () => {
   const [videoTitle, setVideoTitle] = useState('');
   const [videoDescription, setVideoDescription] = useState('');
   const [videoFile, setVideoFile] = useState(null);
+  const [videoThumbnailUrl, setVideoThumbnailUrl] = useState('');
+  const [videoThumbnailUploading, setVideoThumbnailUploading] = useState(false);
   const [videoFree, setVideoFree] = useState(false);
   const [isUploadingVideo, setIsUploadingVideo] = useState(false);
 
@@ -45,6 +47,41 @@ const AdminDashboard = () => {
   useEffect(() => {
     fetchCourses();
   }, []);
+
+  const handleThumbnailUpload = async (e, isEdit) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      if (isEdit) {
+        setEditThumbnailUploading(true);
+      } else {
+        setThumbnailUploading(true);
+      }
+
+      const response = await api.post('/admin/courses/thumbnail', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      if (isEdit) {
+        setEditThumbnailUrl(response.data.thumbnailUrl);
+      } else {
+        setThumbnailUrl(response.data.thumbnailUrl);
+      }
+    } catch (err) {
+      console.error('Failed to upload thumbnail', err);
+      alert('Error uploading thumbnail.');
+    } finally {
+      if (isEdit) {
+        setEditThumbnailUploading(false);
+      } else {
+        setThumbnailUploading(false);
+      }
+    }
+  };
 
   const handleCreateCourse = async (e) => {
     e.preventDefault();
@@ -95,6 +132,7 @@ const AdminDashboard = () => {
     setVideoTitle('');
     setVideoDescription('');
     setVideoFile(null);
+    setVideoThumbnailUrl('');
     setVideoFree(false);
   };
 
@@ -154,7 +192,29 @@ const AdminDashboard = () => {
     setVideoTitle('');
     setVideoDescription('');
     setVideoFile(null);
+    setVideoThumbnailUrl('');
     setVideoFree(false);
+  };
+
+  const handleVideoThumbnailUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      setVideoThumbnailUploading(true);
+      const response = await api.post('/admin/courses/thumbnail', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      setVideoThumbnailUrl(response.data.thumbnailUrl);
+    } catch (err) {
+      console.error('Failed to upload video thumbnail', err);
+      alert('Error uploading video thumbnail.');
+    } finally {
+      setVideoThumbnailUploading(false);
+    }
   };
 
   const handleUploadVideo = async (e) => {
@@ -172,6 +232,7 @@ const AdminDashboard = () => {
       formData.append('title', videoTitle);
       formData.append('description', videoDescription);
       formData.append('freeVideo', videoFree);
+      if (videoThumbnailUrl) formData.append('thumbnailUrl', videoThumbnailUrl);
       formData.append('file', videoFile);
 
       await api.post('/admin/videos/upload', formData);
@@ -315,15 +376,30 @@ const AdminDashboard = () => {
                 />
               </div>
               <div className="field">
-                <label>Thumbnail URL (Optional)</label>
+                <label>Thumbnail Image (Optional)</label>
                 <input
-                  type="text"
-                  placeholder="https://..."
-                  value={editCourse ? editThumbnailUrl : thumbnailUrl}
-                  onChange={(e) =>
-                    editCourse ? setEditThumbnailUrl(e.target.value) : setThumbnailUrl(e.target.value)
-                  }
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleThumbnailUpload(e, !!editCourse)}
+                  disabled={editCourse ? editThumbnailUploading : thumbnailUploading}
                 />
+                {editCourse ? (
+                  editThumbnailUploading ? <small style={{ color: 'var(--color-text-muted)', marginTop: '0.5rem', display: 'block' }}>Uploading...</small> :
+                  editThumbnailUrl && editThumbnailUrl !== 'sample-thumbnail-url' && (
+                    <div style={{ marginTop: '0.5rem' }}>
+                      <img src={editThumbnailUrl} alt="Thumbnail preview" style={{ maxWidth: '100px', borderRadius: '4px' }} />
+                      <small style={{ color: 'var(--color-primary)', display: 'block' }}>Thumbnail uploaded!</small>
+                    </div>
+                  )
+                ) : (
+                  thumbnailUploading ? <small style={{ color: 'var(--color-text-muted)', marginTop: '0.5rem', display: 'block' }}>Uploading...</small> :
+                  thumbnailUrl && thumbnailUrl !== 'sample-thumbnail-url' && (
+                    <div style={{ marginTop: '0.5rem' }}>
+                      <img src={thumbnailUrl} alt="Thumbnail preview" style={{ maxWidth: '100px', borderRadius: '4px' }} />
+                      <small style={{ color: 'var(--color-primary)', display: 'block' }}>Thumbnail uploaded!</small>
+                    </div>
+                  )
+                )}
               </div>
               <div className="field full">
                 <label>Description</label>
@@ -393,6 +469,22 @@ const AdminDashboard = () => {
                     accept="video/*"
                     onChange={(e) => setVideoFile(e.target.files[0])}
                   />
+                </div>
+                <div className="field full">
+                  <label>Video Thumbnail (Optional)</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleVideoThumbnailUpload}
+                    disabled={videoThumbnailUploading}
+                  />
+                  {videoThumbnailUploading ? <small style={{ color: 'var(--color-text-muted)', marginTop: '0.5rem', display: 'block' }}>Uploading...</small> :
+                  videoThumbnailUrl && videoThumbnailUrl !== 'sample-thumbnail-url' && (
+                    <div style={{ marginTop: '0.5rem' }}>
+                      <img src={videoThumbnailUrl} alt="Video thumbnail preview" style={{ maxWidth: '100px', borderRadius: '4px' }} />
+                      <small style={{ color: 'var(--color-primary)', display: 'block' }}>Thumbnail uploaded!</small>
+                    </div>
+                  )}
                 </div>
                 <div className="field">
                   <label>

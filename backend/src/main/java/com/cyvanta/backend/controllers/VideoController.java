@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,8 +29,9 @@ public class VideoController {
                                                      @RequestParam("title") String title,
                                                      @RequestParam(value = "description", required = false) String description,
                                                      @RequestParam(value = "freeVideo", defaultValue = "false") boolean freeVideo,
-                                                     @RequestPart("file") MultipartFile file) throws IOException {
-        Video video = videoService.uploadVideo(courseId, file, title, description, freeVideo);
+                                                     @RequestParam(value = "thumbnailUrl", required = false) String thumbnailUrl,
+                                                     @RequestPart("file") MultipartFile file) throws IOException, GeneralSecurityException {
+        Video video = videoService.uploadVideo(courseId, file, title, description, freeVideo, thumbnailUrl);
         return ResponseEntity.ok(toResponse(video));
     }
 
@@ -52,6 +54,8 @@ public class VideoController {
                 video.getDescription(),
                 video.getCloudinaryPublicId(),
                 video.getSecureUrl(),
+                video.getThumbnailUrl(),
+                video.getYoutubeVideoId(),
                 video.isFreeVideo(),
                 video.isPublished(),
                 video.getCreatedAt()

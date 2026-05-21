@@ -16,6 +16,8 @@ public class Video {
     private String description;
     private String cloudinaryPublicId;
     private String secureUrl;
+    private String thumbnailUrl;
+    private String youtubeVideoId;
     private boolean freeVideo;
     private boolean published;
     private LocalDateTime createdAt;
@@ -73,6 +75,14 @@ public class Video {
         return createdAt;
     }
 
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
+    }
+
+    public String getYoutubeVideoId() {
+        return youtubeVideoId;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -107,5 +117,13 @@ public class Video {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
+    }
+
+    public void setYoutubeVideoId(String youtubeVideoId) {
+        this.youtubeVideoId = youtubeVideoId;
     }
 }
