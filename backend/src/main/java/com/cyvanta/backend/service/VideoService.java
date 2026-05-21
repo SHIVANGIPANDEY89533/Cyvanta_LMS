@@ -18,31 +18,35 @@ public class VideoService {
     private final VideoRepository videoRepository;
     private final CourseRepository courseRepository;
     private final CloudinaryService cloudinaryService;
+    private final YouTubeService youtubeService;
 
     public VideoService(VideoRepository videoRepository,
                         CourseRepository courseRepository,
-                        CloudinaryService cloudinaryService) {
+                        CloudinaryService cloudinaryService,
+                        YouTubeService youtubeService) {
         this.videoRepository = videoRepository;
         this.courseRepository = courseRepository;
         this.cloudinaryService = cloudinaryService;
+        this.youtubeService = youtubeService;
     }
 
     public Video uploadVideo(String courseId,
                              MultipartFile file,
                              String title,
                              String description,
-                             boolean freeVideo) throws IOException {
+                             boolean freeVideo,
+                             String thumbnailUrl) throws IOException, java.security.GeneralSecurityException {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found with id: " + courseId));
 
-        Map uploadResult = cloudinaryService.uploadVideo(file);
+        Map<String, String> uploadResult = youtubeService.uploadVideo(file, title, description);
 
         Video video = new Video();
         video.setCourseId(course.getId());
         video.setTitle(title);
         video.setDescription(description);
-        video.setCloudinaryPublicId((String) uploadResult.get("public_id"));
-        video.setSecureUrl((String) uploadResult.get("secure_url"));
+        video.setYoutubeVideoId(uploadResult.get("youtubeVideoId"));
+        video.setThumbnailUrl(thumbnailUrl);
         video.setFreeVideo(freeVideo);
         video.setPublished(true);
 
