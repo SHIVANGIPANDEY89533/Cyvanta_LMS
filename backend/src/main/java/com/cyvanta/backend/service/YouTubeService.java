@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -38,46 +37,46 @@ public class YouTubeService {
     @Value("${youtube.client-secret}")
     private String clientSecret;
 
+    @Value("${youtube.redirect-uri}")
+    private String redirectUri;
+
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     private static final String CREDENTIALS_DIRECTORY = ".oauth-credentials";
     private static final String USER_ID = "cyvanta-admin";
     private static final List<String> SCOPES = Collections.singletonList(YouTubeScopes.YOUTUBE_UPLOAD);
-    private static final String CALLBACK_PATH = "/api/youtube/callback";
 
     private GoogleAuthorizationCodeFlow getFlow() throws GeneralSecurityException, IOException {
         HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-        FileDataStoreFactory dataStoreFactory = new FileDataStoreFactory(new File(CREDENTIALS_DIRECTORY));
+
+        File dataStoreDir = new File(System.getProperty("user.home"), CREDENTIALS_DIRECTORY);
+        if (!dataStoreDir.exists()) {
+            dataStoreDir.mkdirs();
+        }
+        FileDataStoreFactory dataStoreFactory = new FileDataStoreFactory(dataStoreDir);
 
         GoogleClientSecrets.Details details = new GoogleClientSecrets.Details();
         details.setClientId(clientId);
         details.setClientSecret(clientSecret);
 
         GoogleClientSecrets clientSecrets = new GoogleClientSecrets();
-        clientSecrets.setInstalled(details);
+        clientSecrets.setWeb(details);
 
         return new GoogleAuthorizationCodeFlow.Builder(
-                httpTransport, JSON_FACTORY, clientSecrets, SCOPES)
+                httpTransport, JSON_FACTORY, clientSecrets, SCOPES
+        )
                 .setDataStoreFactory(dataStoreFactory)
                 .setAccessType("offline")
                 .build();
     }
 
-    /**
-     * Generate the Google OAuth authorization URL.
-     * The admin visits this URL in their browser to authorize YouTube access.
-     */
-    public String getAuthorizationUrl(String redirectUri) throws GeneralSecurityException, IOException {
+    public String getAuthorizationUrl() throws GeneralSecurityException, IOException {
         return getFlow()
                 .newAuthorizationUrl()
                 .setRedirectUri(redirectUri)
                 .build();
     }
 
-    /**
-     * Exchange the authorization code (received from Google callback) for tokens.
-     * Tokens are automatically stored in the .oauth-credentials directory.
-     */
-    public void exchangeCodeForTokens(String code, String redirectUri) throws GeneralSecurityException, IOException {
+    public void exchangeCodeForTokens(String code) throws GeneralSecurityException, IOException {
         GoogleAuthorizationCodeFlow flow = getFlow();
         TokenResponse tokenResponse = flow.newTokenRequest(code)
                 .setRedirectUri(redirectUri)
@@ -85,9 +84,6 @@ public class YouTubeService {
         flow.createAndStoreCredential(tokenResponse, USER_ID);
     }
 
-    /**
-     * Check if YouTube has been authorized (tokens exist).
-     */
     public boolean isAuthorized() {
         try {
             Credential credential = getFlow().loadCredential(USER_ID);
@@ -103,7 +99,8 @@ public class YouTubeService {
 
         if (credential == null || credential.getRefreshToken() == null) {
             throw new IllegalStateException(
-                "YouTube is not authorized yet. Please visit /api/youtube/authorize to connect your YouTube account first.");
+                    "YouTube is not authorized yet. Please visit /api/youtube/authorize to connect your YouTube account first."
+            );
         }
 
         HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
@@ -112,7 +109,9 @@ public class YouTubeService {
                 .build();
     }
 
-    public Map<String, String> uploadVideo(MultipartFile file, String title, String description) throws GeneralSecurityException, IOException {
+    public Map<String, String> uploadVideo(MultipartFile file, String title, String description)
+            throws GeneralSecurityException, IOException {
+
         YouTube youtubeService = getYouTubeService();
 
         Video videoObjectDefiningMetadata = new Video();
@@ -128,12 +127,12 @@ public class YouTubeService {
 
         InputStreamContent mediaContent = new InputStreamContent(
                 file.getContentType(),
-                new BufferedInputStream(file.getInputStream())
+                file.getInputStream()
         );
         mediaContent.setLength(file.getSize());
 
         YouTube.Videos.Insert videoInsertRequest = youtubeService.videos()
-                .insert(Collections.singletonList("snippet,statistics,status"), videoObjectDefiningMetadata, mediaContent);
+                .insert(Collections.singletonList("snippet,status"), videoObjectDefiningMetadata, mediaContent);
 
         MediaHttpUploader uploader = videoInsertRequest.getMediaHttpUploader();
         uploader.setDirectUploadEnabled(false);
@@ -143,6 +142,7 @@ public class YouTubeService {
 
         Map<String, String> resultMap = new HashMap<>();
         resultMap.put("youtubeVideoId", returnedVideo.getId());
+        resultMap.put("youtubeUrl", "https://www.youtube.com/watch?v=" + returnedVideo.getId());
         return resultMap;
     }
 }
