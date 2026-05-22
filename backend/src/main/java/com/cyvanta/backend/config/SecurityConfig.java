@@ -41,6 +41,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/error").permitAll()
+                        .requestMatchers("/api/youtube/callback").permitAll()
+                        .requestMatchers("/api/youtube/authorize").permitAll()
+                        .requestMatchers("/api/youtube/status").permitAll()
                         .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/api/student/**").hasAuthority("STUDENT")
                         .anyRequest().authenticated()

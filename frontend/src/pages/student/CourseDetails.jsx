@@ -71,15 +71,29 @@ const CourseDetails = () => {
         <article className="video-shell">
           <div className="video-frame" style={{ background: '#000', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             {activeVideo ? (
-              <video 
-                controls 
-                autoPlay 
-                style={{ width: '100%', height: '100%', outline: 'none' }}
-                src={activeVideo.secureUrl}
-                poster={activeVideo.thumbnailUrl ? activeVideo.thumbnailUrl : (course.thumbnailUrl !== 'sample-thumbnail-url' ? course.thumbnailUrl : undefined)}
-              >
-                Your browser does not support the video tag.
-              </video>
+              activeVideo.youtubeVideoId ? (
+                <iframe
+                  key={activeVideo.youtubeVideoId}
+                  width="100%"
+                  height="100%"
+                  src={`https://www.youtube.com/embed/${activeVideo.youtubeVideoId}?autoplay=1`}
+                  title={activeVideo.title}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  style={{ border: 'none', minHeight: '400px' }}
+                />
+              ) : (
+                <video
+                  controls
+                  autoPlay
+                  style={{ width: '100%', height: '100%', outline: 'none' }}
+                  src={activeVideo.secureUrl}
+                  poster={activeVideo.thumbnailUrl ? activeVideo.thumbnailUrl : (course.thumbnailUrl !== 'sample-thumbnail-url' ? course.thumbnailUrl : undefined)}
+                >
+                  Your browser does not support the video tag.
+                </video>
+              )
             ) : (
               <div style={{ padding: '3rem', textAlign: 'center', color: '#666' }}>
                 <p>No video selected.</p>

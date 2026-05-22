@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -54,10 +53,14 @@ public class AdminCourseController {
     }
 
     @PostMapping("/thumbnail")
-    public ResponseEntity<Map<String, String>> uploadThumbnail(@RequestPart("file") MultipartFile file) throws IOException {
-        Map<String, Object> uploadResult = cloudinaryService.uploadImage(file);
-        String secureUrl = (String) uploadResult.get("secure_url");
-        return ResponseEntity.ok(Map.of("thumbnailUrl", secureUrl));
+    public ResponseEntity<Map<String, String>> uploadThumbnail(@RequestPart("file") MultipartFile file) {
+        try {
+            Map<String, Object> uploadResult = cloudinaryService.uploadImage(file);
+            String secureUrl = (String) uploadResult.get("secure_url");
+            return ResponseEntity.ok(Map.of("thumbnailUrl", secureUrl));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
+        }
     }
 
     @GetMapping("/{id}")

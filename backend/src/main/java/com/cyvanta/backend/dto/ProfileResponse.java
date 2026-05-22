@@ -1,7 +1,5 @@
 package com.cyvanta.backend.dto;
 
-import com.cyvanta.backend.models.Role;
-
 import java.time.LocalDateTime;
 
 public class ProfileResponse {
@@ -9,20 +7,22 @@ public class ProfileResponse {
     private String id;
     private String name;
     private String email;
-    private Role role;
+    private String role;
     private boolean active;
     private LocalDateTime createdAt;
+    private String bio;
 
     public ProfileResponse() {
     }
 
-    public ProfileResponse(String id, String name, String email, Role role, boolean active, LocalDateTime createdAt) {
+    public ProfileResponse(String id, String name, String email, String role, boolean active, LocalDateTime createdAt, String bio) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.role = role;
         this.active = active;
         this.createdAt = createdAt;
+        this.bio = bio;
     }
 
     public String getId() {
@@ -49,11 +49,11 @@ public class ProfileResponse {
         this.email = email;
     }
 
-    public Role getRole() {
+    public String getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(String role) {
         this.role = role;
     }
 
@@ -71,5 +71,13 @@ public class ProfileResponse {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
     }
 }

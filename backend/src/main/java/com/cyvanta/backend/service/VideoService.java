@@ -17,16 +17,13 @@ public class VideoService {
 
     private final VideoRepository videoRepository;
     private final CourseRepository courseRepository;
-    private final CloudinaryService cloudinaryService;
     private final YouTubeService youtubeService;
 
     public VideoService(VideoRepository videoRepository,
                         CourseRepository courseRepository,
-                        CloudinaryService cloudinaryService,
                         YouTubeService youtubeService) {
         this.videoRepository = videoRepository;
         this.courseRepository = courseRepository;
-        this.cloudinaryService = cloudinaryService;
         this.youtubeService = youtubeService;
     }
 

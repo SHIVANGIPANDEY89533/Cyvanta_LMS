@@ -9,7 +9,6 @@ import com.cyvanta.backend.repositories.RecordingRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -31,24 +30,29 @@ public class RecordingService {
     public Recording uploadRecording(String courseId,
                                      String liveSessionId,
                                      MultipartFile file,
-                                     String title) throws IOException {
+                                     String title) {
         LiveSession liveSession = liveSessionRepository.findById(liveSessionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Live session not found with id: " + liveSessionId));
 
-        Map uploadResult = cloudinaryService.uploadVideo(file);
+        try {
+            Map<String, Object> uploadResult = cloudinaryService.uploadVideo(file);
 
-        Recording recording = new Recording();
-        recording.setCourseId(courseId);
-        recording.setLiveSessionId(liveSessionId);
-        recording.setTitle(title);
-        recording.setCloudinaryPublicId((String) uploadResult.get("public_id"));
-        recording.setSecureUrl((String) uploadResult.get("secure_url"));
-        recording.setStatus(RecordingStatus.READY);
+            Recording recording = new Recording();
+            recording.setCourseId(courseId);
+            recording.setLiveSessionId(liveSessionId);
+            recording.setTitle(title);
+            recording.setCloudinaryPublicId((String) uploadResult.get("public_id"));
+            recording.setSecureUrl((String) uploadResult.get("secure_url"));
+            recording.setStatus(RecordingStatus.READY);
 
-        Recording saved = recordingRepository.save(recording);
-        liveSession.setRecordingAvailable(true);
-        liveSessionRepository.save(liveSession);
-        return saved;
+            Recording saved = recordingRepository.save(recording);
+            liveSession.setRecordingAvailable(true);
+            liveSessionRepository.save(liveSession);
+            return saved;
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to upload recording to Cloudinary", e);
+        }
     }
 
     public List<Recording> getAllRecordings() {

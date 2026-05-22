@@ -301,34 +301,34 @@ const AdminDashboard = () => {
                   <th>Actions</th>
                 </tr>
               </thead>
-              <tbody>
-                {loading ? (
-                  <tr><td colSpan="4" style={{ textAlign: 'center' }}>Loading courses...</td></tr>
-                ) : courses.length === 0 ? (
-                  <tr><td colSpan="4" style={{ textAlign: 'center' }}>No courses found. Create one!</td></tr>
-                ) : (
-                  courses.map(course => (
-                    <tr key={course.id}>
-                      <td>{course.title}</td>
-                      <td>{course.price > 0 ? `$${course.price}` : 'Free'}</td>
-                      <td>{course.published ? 'Published' : 'Draft'}</td>
-                      <td>
-                        <div className="actions">
-                          <span className="chip-btn" onClick={() => handleEditCourse(course)}>
-                            Edit
-                          </span>
-                          <span className="chip-btn warn" onClick={() => handleDeleteCourse(course.id)}>
-                            Delete
-                          </span>
-                          <span className="chip-btn" onClick={() => handleOpenVideoUpload(course)}>
-                            Add Video
-                          </span>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
+            <tbody>
+  {loading ? (
+    <tr><td colSpan="4" style={{ textAlign: 'center' }}>Loading courses...</td></tr>
+  ) : courses.length === 0 ? (
+    <tr><td colSpan="4" style={{ textAlign: 'center' }}>No courses found. Create one!</td></tr>
+  ) : (
+    courses.map(course => (
+      <tr key={course.id}>
+        <td>{course.title}</td>
+        <td>{course.price > 0 ? `₹${Number(course.price).toLocaleString('en-IN')}` : 'Free'}</td>
+        <td>{course.published ? 'Published' : 'Draft'}</td>
+        <td>
+          <div className="actions">
+            <span className="chip-btn" onClick={() => handleEditCourse(course)}>
+              Edit
+            </span>
+            <span className="chip-btn warn" onClick={() => handleDeleteCourse(course.id)}>
+              Delete
+            </span>
+            <span className="chip-btn" onClick={() => handleOpenVideoUpload(course)}>
+              Add Video
+            </span>
+          </div>
+        </td>
+      </tr>
+    ))
+  )}
+</tbody>
             </table>
           </article>
 
