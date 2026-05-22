@@ -20,19 +20,37 @@ public class CloudinaryService {
         this.folder = folder;
     }
 
-    public Map<String, Object> uploadImage(MultipartFile file) throws Exception {
-        return cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
-                "resource_type", "image",
-                "folder", folder,
-                "overwrite", true
-        ));
+    public Map<String, Object> uploadImage(MultipartFile file) {
+        try {
+            if (file == null || file.isEmpty()) {
+                throw new IllegalArgumentException("Image file is empty");
+            }
+
+            return cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
+                    "resource_type", "image",
+                    "folder", folder,
+                    "overwrite", true,
+                    "invalidate", true
+            ));
+        } catch (Exception e) {
+            throw new RuntimeException("Image upload failed: " + e.getMessage(), e);
+        }
     }
 
-    public Map<String, Object> uploadVideo(MultipartFile file) throws Exception {
-        return cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
-                "resource_type", "video",
-                "folder", folder,
-                "overwrite", true
-        ));
+    public Map<String, Object> uploadVideo(MultipartFile file) {
+        try {
+            if (file == null || file.isEmpty()) {
+                throw new IllegalArgumentException("Video file is empty");
+            }
+
+            return cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
+                    "resource_type", "video",
+                    "folder", folder,
+                    "overwrite", true,
+                    "invalidate", true
+            ));
+        } catch (Exception e) {
+            throw new RuntimeException("Video upload failed: " + e.getMessage(), e);
+        }
     }
 }
