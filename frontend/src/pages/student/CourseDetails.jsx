@@ -82,7 +82,7 @@ const CourseDetails = () => {
                 autoPlay 
                 style={{ width: '100%', height: '100%', outline: 'none' }}
                 src={activeVideo.secureUrl}
-                poster={course.thumbnailUrl !== 'sample-thumbnail-url' ? course.thumbnailUrl : undefined}
+                poster={activeVideo.thumbnailUrl ? activeVideo.thumbnailUrl : (course.thumbnailUrl !== 'sample-thumbnail-url' ? course.thumbnailUrl : undefined)}
               >
                 Your browser does not support the video tag.
               </video>

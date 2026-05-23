@@ -10,6 +10,8 @@ public class VideoResponse {
     private String description;
     private String cloudinaryPublicId;
     private String secureUrl;
+    private String thumbnailUrl;
+    private String youtubeVideoId;
     private boolean freeVideo;
     private boolean published;
     private LocalDateTime createdAt;
@@ -17,13 +19,15 @@ public class VideoResponse {
     public VideoResponse() {
     }
 
-    public VideoResponse(String id, String courseId, String title, String description, String cloudinaryPublicId, String secureUrl, boolean freeVideo, boolean published, LocalDateTime createdAt) {
+    public VideoResponse(String id, String courseId, String title, String description, String cloudinaryPublicId, String secureUrl, String thumbnailUrl, String youtubeVideoId, boolean freeVideo, boolean published, LocalDateTime createdAt) {
         this.id = id;
         this.courseId = courseId;
         this.title = title;
         this.description = description;
         this.cloudinaryPublicId = cloudinaryPublicId;
         this.secureUrl = secureUrl;
+        this.thumbnailUrl = thumbnailUrl;
+        this.youtubeVideoId = youtubeVideoId;
         this.freeVideo = freeVideo;
         this.published = published;
         this.createdAt = createdAt;
@@ -75,6 +79,22 @@ public class VideoResponse {
 
     public void setSecureUrl(String secureUrl) {
         this.secureUrl = secureUrl;
+    }
+
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
+    }
+
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
+    }
+
+    public String getYoutubeVideoId() {
+        return youtubeVideoId;
+    }
+
+    public void setYoutubeVideoId(String youtubeVideoId) {
+        this.youtubeVideoId = youtubeVideoId;
     }
 
     public boolean isFreeVideo() {
