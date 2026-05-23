@@ -1,4 +1,7 @@
+backend/.env
+frontend/.env
 backend/HELP.md
+
 target/
 ../.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
@@ -30,4 +33,4 @@ build/
 !**/src/test/**/build/
 
 ### VS Code ###
-.vscode/
+.vscode/git rm --cached backend/.env frontend/.env
