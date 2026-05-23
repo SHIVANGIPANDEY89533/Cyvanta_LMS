@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 
+
 const StudentDashboard = () => {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -26,6 +28,7 @@ const StudentDashboard = () => {
     fetchDashboardData();
   }, []);
 
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userRole');
@@ -33,9 +36,11 @@ const StudentDashboard = () => {
     navigate('/login');
   };
 
+
   if (loading) {
     return <div style={{ padding: '2rem', textAlign: 'center' }}>Loading your dashboard...</div>;
   }
+
 
   return (
     <div className="view-panel" style={{ display: 'grid', gap: 'var(--space-6)' }}>
@@ -72,6 +77,7 @@ const StudentDashboard = () => {
         </div>
       </div>
 
+
       {/* 3. Main Course Cards Section */}
       <section>
         <div className="section-head">
@@ -88,22 +94,28 @@ const StudentDashboard = () => {
             <p style={{ padding: '1rem', color: 'var(--color-text-muted)' }}>No courses published yet.</p>
           ) : (
             courses.map((course, idx) => {
-              // Cycle through gradient colors if no thumbnail
               const gradients = [
                 'linear-gradient(135deg,#0d7c66,#59a985)',
                 'linear-gradient(135deg,#915eff,#4587f3)',
                 'linear-gradient(135deg,#e05263,#f78f8f)'
               ];
-              const bg = course.thumbnailUrl && course.thumbnailUrl !== 'sample-thumbnail-url' 
-                ? `url(${course.thumbnailUrl}) center/cover` 
-                : gradients[idx % gradients.length];
+              const hasThumb = course.thumbnailUrl && course.thumbnailUrl !== 'sample-thumbnail-url';
+              const bg = hasThumb ? `url(${course.thumbnailUrl}) center/cover` : gradients[idx % gradients.length];
+
 
               return (
                 <article key={course.id} className="course-card">
-                  <div className="thumb" style={{ background: bg }}>
-                    <div className="badge-row">
-                      <span className="badge">{course.price > 0 ? `$${course.price}` : 'Free'}</span>
+                  <div className="thumb" style={{ background: bg, position: 'relative', overflow: 'hidden' }}>
+                    <div className="badge-row" style={{ position: 'relative', zIndex: 2 }}>
+                      <span className="badge">{course.price > 0 ? `₹${course.price}` : 'Free'}</span>
                     </div>
+                    {hasThumb && (
+                      <img
+                        src={course.thumbnailUrl}
+                        alt={course.title}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }}
+                      />
+                    )}
                   </div>
                   <div className="course-body">
                     <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '1.1rem' }}>{course.title}</h4>
@@ -118,6 +130,7 @@ const StudentDashboard = () => {
           )}
         </div>
       </section>
+
 
       {/* 4. Profile & Actions Grid */}
       <section className="details-grid">
@@ -164,8 +177,10 @@ const StudentDashboard = () => {
         </article>
       </section>
 
+
     </div>
   );
 };
+
 
 export default StudentDashboard;

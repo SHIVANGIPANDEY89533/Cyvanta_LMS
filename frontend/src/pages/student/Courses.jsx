@@ -11,9 +11,10 @@ const Courses = () => {
     const fetchCourses = async () => {
       try {
         const response = await api.get('/student/courses');
-        setCourses(response.data);
+        setCourses(Array.isArray(response.data) ? response.data : []);
       } catch (err) {
-        console.error("Failed to load courses", err);
+        console.error('Failed to load courses', err);
+        setCourses([]);
       } finally {
         setLoading(false);
       }
@@ -27,7 +28,6 @@ const Courses = () => {
 
   return (
     <div className="view-panel" style={{ display: 'grid', gap: 'var(--space-6)' }}>
-      
       <div className="hero" style={{ padding: '2rem' }}>
         <article className="hero-card">
           <div className="eyebrow">Course Catalog</div>
@@ -44,11 +44,13 @@ const Courses = () => {
           </div>
           <div>
             {localStorage.getItem('userRole') === 'ADMIN' && (
-              <button className="btn primary" onClick={() => navigate('/admin')}>Add Course</button>
+              <button className="btn primary" onClick={() => navigate('/admin')}>
+                Add Course
+              </button>
             )}
           </div>
         </div>
-        
+
         <div className="courses-grid">
           {courses.length === 0 ? (
             <p style={{ padding: '1rem', color: 'var(--color-text-muted)' }}>No courses published yet.</p>
@@ -59,20 +61,29 @@ const Courses = () => {
                 'linear-gradient(135deg,#915eff,#4587f3)',
                 'linear-gradient(135deg,#e05263,#f78f8f)'
               ];
-              const bg = course.thumbnailUrl && course.thumbnailUrl !== 'sample-thumbnail-url' 
-                ? `url(${course.thumbnailUrl}) center/cover` 
-                : gradients[idx % gradients.length];
+              const hasThumb = course.thumbnailUrl && course.thumbnailUrl !== 'sample-thumbnail-url';
+              const bg = hasThumb ? `url(${course.thumbnailUrl}) center/cover` : gradients[idx % gradients.length];
 
               return (
                 <article key={course.id} className="course-card">
-                  <div className="thumb" style={{ background: bg }}>
-                    <div className="badge-row">
-                      <span className="badge">{course.price > 0 ? `$${course.price}` : 'Free'}</span>
+                  <div className="thumb" style={{ background: bg, position: 'relative', overflow: 'hidden' }}>
+                    <div className="badge-row" style={{ position: 'relative', zIndex: 2 }}>
+                      <span className="badge">{course.price > 0 ? `₹${course.price}` : 'Free'}</span>
                     </div>
+                    {hasThumb && (
+                      <img
+                        src={course.thumbnailUrl}
+                        alt={course.title}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }}
+                      />
+                    )}
                   </div>
+
                   <div className="course-body">
                     <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '1.1rem' }}>{course.title}</h4>
-                    <p className="muted" style={{ marginBottom: '1rem', fontSize: '0.9rem', flexGrow: 1 }}>{course.description}</p>
+                    <p className="muted" style={{ marginBottom: '1rem', fontSize: '0.9rem', flexGrow: 1 }}>
+                      {course.description}
+                    </p>
                     <button className="btn primary" onClick={() => navigate(`/student/courses/${course.id}`)}>
                       Go to Course
                     </button>
@@ -83,7 +94,6 @@ const Courses = () => {
           )}
         </div>
       </section>
-
     </div>
   );
 };

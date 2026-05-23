@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 
+
 const CourseDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -9,6 +10,7 @@ const CourseDetails = () => {
   const [videos, setVideos] = useState([]);
   const [activeVideo, setActiveVideo] = useState(null);
   const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     const fetchCourseDetails = async () => {
@@ -31,9 +33,11 @@ const CourseDetails = () => {
     fetchCourseDetails();
   }, [id]);
 
+
   if (loading) {
     return <div style={{ padding: '2rem', textAlign: 'center' }}>Loading course content...</div>;
   }
+
 
   if (!course) {
     return (
@@ -44,6 +48,7 @@ const CourseDetails = () => {
       </div>
     );
   }
+
 
   return (
     <div className="view-panel" style={{ display: 'grid', gap: 'var(--space-6)' }}>
@@ -58,11 +63,12 @@ const CourseDetails = () => {
           </div>
           <div className="badge-row">
             <span className="badge" style={{ fontSize: '1rem', padding: '0.5rem 1rem' }}>
-              {course.price > 0 ? `$${course.price}` : 'Free'}
+              {course.price > 0 ? `₹${course.price}` : 'Free'}
             </span>
           </div>
         </div>
       </div>
+
 
       {/* 2. Main Content Grid */}
       <section className="details-grid">
@@ -137,8 +143,10 @@ const CourseDetails = () => {
         </article>
       </section>
 
+
     </div>
   );
 };
+
 
 export default CourseDetails;

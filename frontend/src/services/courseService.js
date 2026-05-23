@@ -7,11 +7,11 @@ import com.cyvanta.backend.models.Course;
 import com.cyvanta.backend.repositories.CourseRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class CourseService {
+
     private final CourseRepository courseRepository;
 
     public CourseService(CourseRepository courseRepository) {
@@ -26,7 +26,6 @@ public class CourseService {
         course.setPrice(request.getPrice());
         course.setFreeCourse(request.isFreeCourse());
         course.setPublished(request.isPublished());
-        course.setCreatedAt(LocalDateTime.now());
         return courseRepository.save(course);
     }
 

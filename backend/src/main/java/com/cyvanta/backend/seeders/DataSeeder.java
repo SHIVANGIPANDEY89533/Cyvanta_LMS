@@ -110,7 +110,8 @@ public class DataSeeder implements CommandLineRunner {
             course.setTitle("Java Backend Mastery");
             course.setDescription("Spring Boot, MongoDB Atlas, JWT, Cloudinary");
             course.setThumbnailUrl("sample-thumbnail-url");
-            course.setPrice(1999.0);
+            // Convert price from dollars to rupees (1 USD = 83 INR as an example)
+            course.setPrice(1999.0 * 83);
             course.setPublished(true);
             course.setFreeCourse(false);
             course.setCreatedAt(LocalDateTime.now());

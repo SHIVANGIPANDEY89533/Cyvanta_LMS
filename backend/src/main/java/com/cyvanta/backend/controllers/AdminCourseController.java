@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/admin/courses")
 @CrossOrigin("*")
 public class AdminCourseController {
-
     private final CourseService courseService;
     private final CloudinaryService cloudinaryService;
 
@@ -30,21 +29,17 @@ public class AdminCourseController {
 
     @PostMapping
     public ResponseEntity<CourseResponse> createCourse(@RequestBody CreateCourseRequest request) {
-        Course course = courseService.createCourse(request);
-        return ResponseEntity.ok(toResponse(course));
+        return ResponseEntity.ok(toResponse(courseService.createCourse(request)));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CourseResponse> updateCourse(@PathVariable String id,
-                                                       @RequestBody UpdateCourseRequest request) {
-        Course course = courseService.updateCourse(id, request);
-        return ResponseEntity.ok(toResponse(course));
+    public ResponseEntity<CourseResponse> updateCourse(@PathVariable String id, @RequestBody UpdateCourseRequest request) {
+        return ResponseEntity.ok(toResponse(courseService.updateCourse(id, request)));
     }
 
     @GetMapping
     public ResponseEntity<List<CourseResponse>> getAllCourses() {
-        List<Course> courses = courseService.getAllCourses();
-        return ResponseEntity.ok(courses.stream().map(this::toResponse).collect(Collectors.toList()));
+        return ResponseEntity.ok(courseService.getAllCourses().stream().map(this::toResponse).collect(Collectors.toList()));
     }
 
     @DeleteMapping("/{id}")
@@ -56,8 +51,7 @@ public class AdminCourseController {
     @PostMapping("/thumbnail")
     public ResponseEntity<Map<String, String>> uploadThumbnail(@RequestPart("file") MultipartFile file) throws IOException {
         Map<String, Object> uploadResult = cloudinaryService.uploadImage(file);
-        String secureUrl = (String) uploadResult.get("secure_url");
-        return ResponseEntity.ok(Map.of("thumbnailUrl", secureUrl));
+        return ResponseEntity.ok(Map.of("thumbnailUrl", (String) uploadResult.get("secure_url")));
     }
 
     @GetMapping("/{id}")
