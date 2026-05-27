@@ -52,6 +52,8 @@ public class PublicCourseController {
                                 video.getDescription(),
                                 video.getCloudinaryPublicId(),
                                 video.getSecureUrl(),
+                                video.getThumbnailUrl(),
+                                video.getYoutubeVideoId(),
                                 video.isFreeVideo(),
                                 video.isPublished(),
                                 video.getCreatedAt()
