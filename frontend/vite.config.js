@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/uploads': {
-        target: 'http://localhost:8080',
+        target: 'https://cyvanta-lms-backend.onrender.com',
         changeOrigin: true
       }
     }
