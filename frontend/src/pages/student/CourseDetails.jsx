@@ -50,6 +50,15 @@ const CourseDetails = () => {
   }
 
 
+  // Extract Playlist ID from URL
+  const extractPlaylistId = (url) => {
+    if (!url) return null;
+    const match = url.match(/[?&]list=([^&]+)/);
+    return match ? match[1] : (url.length < 40 ? url : null); // If short, assume it's an ID
+  };
+
+  const playlistId = extractPlaylistId(course.youtubePlaylistUrl);
+
   return (
     <div className="view-panel" style={{ display: 'grid', gap: 'var(--space-6)' }}>
       
@@ -57,7 +66,7 @@ const CourseDetails = () => {
       <div className="hero" style={{ padding: '2rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
-            <div className="eyebrow" style={{ cursor: 'pointer' }} onClick={() => navigate('/student')}>← Back to Dashboard</div>
+            <div className="eyebrow" style={{ cursor: 'pointer' }} onClick={() => navigate('/student/courses')}>← Back to Dashboard</div>
             <h2 style={{ marginTop: '0.5rem' }}>{course.title}</h2>
             <p className="muted">{course.description}</p>
           </div>
@@ -70,79 +79,31 @@ const CourseDetails = () => {
       </div>
 
 
-      {/* 2. Main Content Grid */}
-      <section className="details-grid">
-        
-        {/* Left Side: Video Player */}
+      {/* 2. Main Content: YouTube Playlist */}
+      <section style={{ maxWidth: '1000px', margin: '0 auto', width: '100%' }}>
         <article className="video-shell">
-          <div className="video-frame" style={{ background: '#000', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            {activeVideo ? (
-              <video 
-                controls 
-                autoPlay 
-                style={{ width: '100%', height: '100%', outline: 'none' }}
-                src={activeVideo.secureUrl}
-                poster={activeVideo.thumbnailUrl ? activeVideo.thumbnailUrl : (course.thumbnailUrl !== 'sample-thumbnail-url' ? course.thumbnailUrl : undefined)}
-              >
-                Your browser does not support the video tag.
-              </video>
+          <div className="video-frame" style={{ background: '#000', display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: '12px' }}>
+            {playlistId ? (
+              <iframe
+                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }}
+                src={`https://www.youtube.com/embed/videoseries?list=${playlistId}`}
+                title="YouTube video player"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
             ) : (
-              <div style={{ padding: '3rem', textAlign: 'center', color: '#666' }}>
-                <p>No video selected.</p>
+              <div style={{ padding: '3rem', textAlign: 'center', color: '#666', position: 'absolute', top: '50%', transform: 'translateY(-50%)' }}>
+                <p>No YouTube Playlist attached to this course.</p>
               </div>
             )}
           </div>
-          <div className="course-body">
-            <h4>{activeVideo ? activeVideo.title : 'No Video'}</h4>
-            <p className="muted">{activeVideo ? activeVideo.description : 'Select a video from the syllabus to start watching.'}</p>
-          </div>
-        </article>
-        
-        {/* Right Side: Syllabus List */}
-        <article className="panel stack">
-          <div className="section-head" style={{ marginBottom: '1rem' }}>
-            <div>
-              <h3>Course Syllabus</h3>
-              <p>Module videos and resources.</p>
-            </div>
-          </div>
-          
-          <div className="stack" style={{ maxHeight: '600px', overflowY: 'auto' }}>
-            {videos.length === 0 ? (
-              <p className="muted" style={{ padding: '1rem' }}>No videos have been published for this course yet.</p>
-            ) : (
-              videos.map((vid, idx) => (
-                <div 
-                  key={vid.id} 
-                  className="item" 
-                  style={{ 
-                    cursor: 'pointer', 
-                    background: activeVideo?.id === vid.id ? 'var(--color-surface-offset)' : 'transparent',
-                    borderLeft: activeVideo?.id === vid.id ? '3px solid var(--color-primary)' : '3px solid transparent'
-                  }}
-                  onClick={() => setActiveVideo(vid)}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'var(--color-surface-2)', display: 'grid', placeItems: 'center', fontSize: '0.8rem' }}>
-                      {idx + 1}
-                    </div>
-                    <div>
-                      <strong style={{ color: activeVideo?.id === vid.id ? 'var(--color-primary)' : 'inherit' }}>{vid.title}</strong>
-                      <p className="muted" style={{ fontSize: '0.8rem', marginTop: '0.2rem' }}>Video Lesson</p>
-                    </div>
-                  </div>
-                  {activeVideo?.id === vid.id ? (
-                    <span className="chip-btn" style={{ background: 'var(--color-primary)', color: '#fff' }}>Playing</span>
-                  ) : (
-                    <span className="chip-btn">Play</span>
-                  )}
-                </div>
-              ))
-            )}
+          <div className="course-body" style={{ marginTop: '1.5rem', padding: '0 1rem' }}>
+            <h4>Course Videos</h4>
+            <p className="muted">Use the playlist menu in the top right corner of the video player to see all videos in this course.</p>
           </div>
         </article>
       </section>
-
 
     </div>
   );

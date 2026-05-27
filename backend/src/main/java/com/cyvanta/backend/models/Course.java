@@ -14,6 +14,7 @@ public class Course {
     private String title;
     private String description;
     private String thumbnailUrl;
+    private String youtubePlaylistUrl;
     private Double price;
     private boolean freeCourse;
     private boolean published;

@@ -23,6 +23,7 @@ public class CourseService {
         course.setTitle(request.getTitle());
         course.setDescription(request.getDescription());
         course.setThumbnailUrl(request.getThumbnailUrl());
+        course.setYoutubePlaylistUrl(request.getYoutubePlaylistUrl());
         course.setPrice(request.getPrice());
         course.setFreeCourse(request.isFreeCourse());
         course.setPublished(request.isPublished());
@@ -37,6 +38,7 @@ public class CourseService {
         course.setTitle(request.getTitle());
         course.setDescription(request.getDescription());
         course.setThumbnailUrl(request.getThumbnailUrl());
+        course.setYoutubePlaylistUrl(request.getYoutubePlaylistUrl());
         course.setPrice(request.getPrice());
         course.setPublished(request.isPublished());
         course.setFreeCourse(request.isFreeCourse());

@@ -14,6 +14,7 @@ const AdminDashboard = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [thumbnailUrl, setThumbnailUrl] = useState('');
+  const [youtubePlaylistUrl, setYoutubePlaylistUrl] = useState('');
   const [thumbnailUploading, setThumbnailUploading] = useState(false);
   const [price, setPrice] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -22,6 +23,7 @@ const AdminDashboard = () => {
   const [editTitle, setEditTitle] = useState('');
   const [editDescription, setEditDescription] = useState('');
   const [editThumbnailUrl, setEditThumbnailUrl] = useState('');
+  const [editYoutubePlaylistUrl, setEditYoutubePlaylistUrl] = useState('');
   const [editPrice, setEditPrice] = useState(0);
   const [isUpdating, setIsUpdating] = useState(false);
   const [videoCourse, setVideoCourse] = useState(null);
@@ -56,6 +58,7 @@ const AdminDashboard = () => {
     setTitle('');
     setDescription('');
     setThumbnailUrl('');
+    setYoutubePlaylistUrl('');
     setPrice(0);
   };
 
@@ -64,6 +67,7 @@ const AdminDashboard = () => {
     setEditTitle('');
     setEditDescription('');
     setEditThumbnailUrl('');
+    setEditYoutubePlaylistUrl('');
     setEditPrice(0);
   };
 
@@ -115,6 +119,7 @@ const AdminDashboard = () => {
         title,
         description,
         thumbnailUrl: thumbnailUrl || 'sample-thumbnail-url',
+        youtubePlaylistUrl,
         price: Number(price),
         published: true,
         freeCourse: Number(price) === 0,
@@ -135,6 +140,7 @@ const AdminDashboard = () => {
     setEditTitle(course.title || '');
     setEditDescription(course.description || '');
     setEditThumbnailUrl(course.thumbnailUrl || '');
+    setEditYoutubePlaylistUrl(course.youtubePlaylistUrl || '');
     setEditPrice(course.price || 0);
   };
 
@@ -152,6 +158,7 @@ const AdminDashboard = () => {
         title: editTitle,
         description: editDescription,
         thumbnailUrl: editThumbnailUrl || 'sample-thumbnail-url',
+        youtubePlaylistUrl: editYoutubePlaylistUrl,
         price: Number(editPrice),
         published: true,
         freeCourse: Number(editPrice) === 0,
@@ -290,7 +297,6 @@ const AdminDashboard = () => {
                   <p className="muted" style={{ margin: '0 0 0.5rem 0', fontSize: '0.85rem' }}>₹{course.price > 0 ? course.price : 'Free'}</p>
                   <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                     <button className="btn" style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem' }} onClick={() => handleEditCourse(course)}>Edit</button>
-                    <button className="btn primary" style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem' }} onClick={() => handleOpenVideoUpload(course)}>Add Video</button>
                     <button className="btn" style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem', color: 'var(--color-danger)' }} onClick={() => handleDeleteCourse(course.id)}>Delete</button>
                   </div>
                 </div>
@@ -301,41 +307,7 @@ const AdminDashboard = () => {
 
         {/* Right Side: Forms (Create/Edit/Upload) */}
         <div className="stack">
-          {videoCourse ? (
-            // Video Upload Form
-            <article className="panel">
-              <div className="section-head" style={{ marginBottom: '1rem' }}>
-                <div>
-                  <h3>Upload Video to: {videoCourse.title}</h3>
-                  <p>Attach a new lecture file to the selected course.</p>
-                </div>
-                <button className="btn" onClick={resetVideoForm}>Cancel</button>
-              </div>
-              <form className="form-grid" onSubmit={handleUploadVideo}>
-                <div className="field full">
-                  <label>Video Title</label>
-                  <input type="text" value={videoTitle} onChange={e => setVideoTitle(e.target.value)} required />
-                </div>
-                <div className="field full">
-                  <label>Description (Optional)</label>
-                  <textarea value={videoDescription} onChange={e => setVideoDescription(e.target.value)} rows="2"></textarea>
-                </div>
-                <div className="field full">
-                  <label>Video File (MP4, MKV)</label>
-                  <input type="file" accept="video/*" onChange={e => setVideoFile(e.target.files[0])} required />
-                </div>
-                <div className="field full" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <input type="checkbox" id="freeVideo" checked={videoFree} onChange={e => setVideoFree(e.target.checked)} />
-                  <label htmlFor="freeVideo" style={{ margin: 0 }}>Free Preview Video</label>
-                </div>
-                <div className="field full">
-                  <button type="submit" className="btn primary" disabled={isUploadingVideo} style={{ width: '100%' }}>
-                    {isUploadingVideo ? 'Uploading Video (Please wait)...' : 'Upload Video'}
-                  </button>
-                </div>
-              </form>
-            </article>
-          ) : editCourse ? (
+          {editCourse ? (
             // Edit Course Form
             <article className="panel">
               <div className="section-head" style={{ marginBottom: '1rem' }}>
@@ -366,6 +338,10 @@ const AdminDashboard = () => {
                       <small style={{ color: 'var(--color-primary)', display: 'block' }}>Thumbnail uploaded!</small>
                     </div>
                   )}
+                </div>
+                <div className="field full">
+                  <label>YouTube Playlist URL</label>
+                  <input type="url" value={editYoutubePlaylistUrl} onChange={e => setEditYoutubePlaylistUrl(e.target.value)} placeholder="https://www.youtube.com/playlist?list=..." />
                 </div>
                 <div className="field">
                   <label>Price (₹)</label>
@@ -402,6 +378,10 @@ const AdminDashboard = () => {
                 <div className="field full">
                   <label>Description</label>
                   <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Course details..." required rows="3"></textarea>
+                </div>
+                <div className="field full">
+                  <label>YouTube Playlist URL</label>
+                  <input type="url" value={youtubePlaylistUrl} onChange={e => setYoutubePlaylistUrl(e.target.value)} placeholder="https://www.youtube.com/playlist?list=..." />
                 </div>
                 <div className="field">
                   <label>Price (₹)</label>

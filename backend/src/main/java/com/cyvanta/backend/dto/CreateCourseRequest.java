@@ -4,6 +4,7 @@ public class CreateCourseRequest {
     private String title;
     private String description;
     private String thumbnailUrl;
+    private String youtubePlaylistUrl;
     private Double price;
     private boolean freeCourse;
     private boolean published;
@@ -14,6 +15,8 @@ public class CreateCourseRequest {
     public void setDescription(String description) { this.description = description; }
     public String getThumbnailUrl() { return thumbnailUrl; }
     public void setThumbnailUrl(String thumbnailUrl) { this.thumbnailUrl = thumbnailUrl; }
+    public String getYoutubePlaylistUrl() { return youtubePlaylistUrl; }
+    public void setYoutubePlaylistUrl(String youtubePlaylistUrl) { this.youtubePlaylistUrl = youtubePlaylistUrl; }
     public Double getPrice() { return price; }
     public void setPrice(Double price) { this.price = price; }
     public boolean isFreeCourse() { return freeCourse; }

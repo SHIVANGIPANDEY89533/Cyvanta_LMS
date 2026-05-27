@@ -6,6 +6,7 @@ export default function AdminCreateCourse({ onSaved }) {
     title: '',
     description: '',
     thumbnailUrl: '',
+    youtubePlaylistUrl: '',
     price: '',
     freeCourse: true,
     published: true
@@ -31,6 +32,7 @@ export default function AdminCreateCourse({ onSaved }) {
         title: '',
         description: '',
         thumbnailUrl: '',
+        youtubePlaylistUrl: '',
         price: '',
         freeCourse: true,
         published: true
@@ -48,6 +50,7 @@ export default function AdminCreateCourse({ onSaved }) {
       <input name="title" value={form.title} onChange={change} placeholder="Course Title" required />
       <textarea name="description" value={form.description} onChange={change} placeholder="Course Description" required />
       <input name="thumbnailUrl" value={form.thumbnailUrl} onChange={change} placeholder="Thumbnail URL" />
+      <input name="youtubePlaylistUrl" value={form.youtubePlaylistUrl} onChange={change} placeholder="YouTube Playlist URL" />
       <input name="price" type="number" value={form.price} onChange={change} placeholder="Price" min="0" />
       <label><input type="checkbox" name="freeCourse" checked={form.freeCourse} onChange={change} /> Free Course</label>
       <label><input type="checkbox" name="published" checked={form.published} onChange={change} /> Published</label>
