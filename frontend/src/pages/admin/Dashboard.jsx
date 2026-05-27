@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import HeroCard from '../../components/students/HeroCard'; 
+import HeroCard from '../../components/students/HeroCard';
 import api from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 
 const AdminDashboard = () => {
+  const { user } = useAuth();
+  const role = (user?.role || '').toUpperCase().replace(/^ROLE_/, '');
+  const isAdmin = role === 'ADMIN';
+
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [title, setTitle] = useState('');
@@ -28,6 +33,8 @@ const AdminDashboard = () => {
   const [videoFree, setVideoFree] = useState(false);
   const [isUploadingVideo, setIsUploadingVideo] = useState(false);
 
+  const navigate = useNavigate();
+
   const fetchCourses = async () => {
     setLoading(true);
     try {
@@ -44,78 +51,7 @@ const AdminDashboard = () => {
     fetchCourses();
   }, []);
 
-<<<<<<< HEAD
-=======
-  const handleThumbnailUpload = async (e, isEdit = false) => {
-  const file = e.target.files?.[0];
-  if (!file) return;
 
-  if (isEdit) {
-    setEditThumbnailUploading(true);
-  } else {
-    setThumbnailUploading(true);
-  }
-
-  try {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    const response = await api.post('/admin/courses/thumbnail', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-
-    const uploadedUrl = response.data.thumbnailUrl || response.data.url;
-
-    if (isEdit) {
-      setEditThumbnailUrl(uploadedUrl);
-    } else {
-      setThumbnailUrl(uploadedUrl);
-    }
-
-    alert('Thumbnail uploaded successfully!');
-  } catch (err) {
-    console.error('Failed to upload thumbnail', err);
-    alert('Error uploading thumbnail.');
-  } finally {
-    if (isEdit) {
-      setEditThumbnailUploading(false);
-    } else {
-      setThumbnailUploading(false);
-    }
-  }
-};
-
-const handleCreateCourse = async (e) => {
-  e.preventDefault();
-
-  if (!title || !description) return;
-
-  setIsSubmitting(true);
-
-  try {
-    await api.post('/admin/courses', {
-      title,
-      description,
-      thumbnailUrl: thumbnailUrl || 'sample-thumbnail-url',
-      price: Number(price),
-      published: true,
-      freeCourse: Number(price) === 0,
-    });
-
-    resetCreateForm();
-    await fetchCourses();
-
-    alert('Course created successfully!');
-  } catch (err) {
-    console.error('Failed to create course', err);
-    alert('Error creating course.');
-  } finally {
-    setIsSubmitting(false);
-  }
-};
->>>>>>> 7f6d806be22c8458785b8234968453437ad3d14c
   const resetCreateForm = () => {
     setTitle('');
     setDescription('');
@@ -143,6 +79,7 @@ const handleCreateCourse = async (e) => {
   const handleThumbnailUpload = async (e, isEdit = false) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
     if (isEdit) setEditThumbnailUploading(true);
     else setThumbnailUploading(true);
 
@@ -151,7 +88,7 @@ const handleCreateCourse = async (e) => {
       formData.append('file', file);
 
       const response = await api.post('/admin/courses/thumbnail', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
 
       const uploadedUrl = response.data.thumbnailUrl || response.data.url;
@@ -171,6 +108,7 @@ const handleCreateCourse = async (e) => {
   const handleCreateCourse = async (e) => {
     e.preventDefault();
     if (!title || !description) return;
+
     setIsSubmitting(true);
     try {
       await api.post('/admin/courses', {
@@ -179,7 +117,7 @@ const handleCreateCourse = async (e) => {
         thumbnailUrl: thumbnailUrl || 'sample-thumbnail-url',
         price: Number(price),
         published: true,
-        freeCourse: Number(price) === 0
+        freeCourse: Number(price) === 0,
       });
       resetCreateForm();
       await fetchCourses();
@@ -207,6 +145,7 @@ const handleCreateCourse = async (e) => {
       alert('Course title and description are required.');
       return;
     }
+
     setIsUpdating(true);
     try {
       await api.put(`/admin/courses/${editCourse.id}`, {
@@ -252,7 +191,7 @@ const handleCreateCourse = async (e) => {
   };
 
   const handleVideoThumbnailUpload = async (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (!file) return;
 
     const formData = new FormData();
@@ -279,6 +218,7 @@ const handleCreateCourse = async (e) => {
       alert('Video title and file are required.');
       return;
     }
+
     setIsUploadingVideo(true);
     try {
       const formData = new FormData();
@@ -300,15 +240,13 @@ const handleCreateCourse = async (e) => {
     }
   };
 
-  const navigate = useNavigate();
-
   return (
     <section className="view-panel" style={{ display: 'grid', gap: 'var(--space-6)' }}>
       <div className="hero">
         <HeroCard
           eyebrow="Admin Dashboard"
-          title="Manage courses, videos, live classes, and users from one control room."
-          description="Use the panels below to instantly create new courses that will appear on the student dashboard."
+          title={isAdmin ? 'Welcome, Admin' : 'Welcome'}
+          description="Manage courses, videos, live classes, and users from one control room."
           primaryBtn="Create Course"
           secondaryBtn="Manage Users"
           onSecondaryClick={() => navigate('/admin/users')}
@@ -321,185 +259,97 @@ const handleCreateCourse = async (e) => {
         </div>
       </div>
 
-      <section className="admin-grid">
+      <div className="admin-grid">
+        {/* Left Side: Course List */}
         <div className="stack">
-          <article className="table-card">
-            <div className="section-head" style={{ padding: '1.25rem 1.25rem 0 1.25rem' }}>
-              <div>
-                <h3>Manage Courses</h3>
-                <p>Course name, status, and actions.</p>
-              </div>
+          <div className="section-head">
+            <div>
+              <h3>Manage Courses</h3>
+              <p>Update, delete, or add videos to existing courses.</p>
             </div>
-            <table>
-              <thead>
-                <tr>
-                  <th>Course Name</th>
-                  <th>Price</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  <tr><td colSpan="4" style={{ textAlign: 'center' }}>Loading courses...</td></tr>
-                ) : courses.length === 0 ? (
-                  <tr><td colSpan="4" style={{ textAlign: 'center' }}>No courses found. Create one!</td></tr>
-                ) : (
-                  courses.map(course => (
-                    <tr key={course.id}>
-                      <td>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                          {course.thumbnailUrl && course.thumbnailUrl !== 'sample-thumbnail-url' ? (
-                            <img src={course.thumbnailUrl} alt={course.title} style={{ width: '46px', height: '46px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #ddd' }} />
-                          ) : (
-                            <div style={{ width: '46px', height: '46px', borderRadius: '8px', background: 'linear-gradient(135deg,#0d7c66,#59a985)' }} />
-                          )}
-                          <span>{course.title}</span>
-                        </div>
-                      </td>
-                      <td>{course.price > 0 ? `₹${course.price}` : 'Free'}</td>
-                      <td>{course.published ? 'Published' : 'Draft'}</td>
-                      <td>
-                        <div className="actions">
-                          <span className="chip-btn" onClick={() => handleEditCourse(course)}>Edit</span>
-                          <span className="chip-btn warn" onClick={() => handleDeleteCourse(course.id)}>Delete</span>
-                          <span className="chip-btn" onClick={() => handleOpenVideoUpload(course)}>Add Video</span>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </article>
+          </div>
+          
+          {loading ? (
+            <p>Loading courses...</p>
+          ) : courses.length === 0 ? (
+            <p className="muted">No courses found. Create one on the right!</p>
+          ) : (
+            courses.map(course => (
+              <article key={course.id} className="panel" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                <img 
+                  src={course.thumbnailUrl && course.thumbnailUrl !== 'sample-thumbnail-url' ? course.thumbnailUrl : 'https://placehold.co/120x80/222/FFF?text=Course'} 
+                  alt={course.title} 
+                  style={{ width: '120px', height: '80px', objectFit: 'cover', borderRadius: '8px' }} 
+                  onError={(e) => {
+                    e.target.onerror = null; // prevent infinite loop
+                    e.target.src = 'https://placehold.co/120x80/222/FFF?text=Course';
+                  }}
+                />
+                <div style={{ flex: 1 }}>
+                  <h4 style={{ margin: '0 0 0.25rem 0' }}>{course.title}</h4>
+                  <p className="muted" style={{ margin: '0 0 0.5rem 0', fontSize: '0.85rem' }}>₹{course.price > 0 ? course.price : 'Free'}</p>
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <button className="btn" style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem' }} onClick={() => handleEditCourse(course)}>Edit</button>
+                    <button className="btn primary" style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem' }} onClick={() => handleOpenVideoUpload(course)}>Add Video</button>
+                    <button className="btn" style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem', color: 'var(--color-danger)' }} onClick={() => handleDeleteCourse(course.id)}>Delete</button>
+                  </div>
+                </div>
+              </article>
+            ))
+          )}
         </div>
 
+        {/* Right Side: Forms (Create/Edit/Upload) */}
         <div className="stack">
-          <article className="panel">
-            <div className="section-head">
-              <div>
-                <h3>{editCourse ? 'Edit Course' : 'Create New Course'}</h3>
-                <p>{editCourse ? 'Update the selected course details.' : 'Title, description, and price to publish instantly.'}</p>
-              </div>
-            </div>
-            <form onSubmit={editCourse ? handleUpdateCourse : handleCreateCourse} className="form-grid">
-              <div className="field full">
-                <label>Course Title</label>
-                <input required placeholder="e.g. Master MERN Stack 2024" value={editCourse ? editTitle : title} onChange={(e) => editCourse ? setEditTitle(e.target.value) : setTitle(e.target.value)} />
-              </div>
-              <div className="field">
-                <label>Course Price (₹)</label>
-                <input type="number" min="0" step="0.01" required placeholder="e.g. 49.99 (0 for free)" value={editCourse ? editPrice : price} onChange={(e) => editCourse ? setEditPrice(e.target.value) : setPrice(e.target.value)} />
-              </div>
-              <div className="field">
-<<<<<<< HEAD
-                <div className="field">
-  <label>Thumbnail Image (Optional)</label>
-
-  <input
-    type="file"
-    accept="image/*"
-    onChange={(e) => handleThumbnailUpload(e, !!editCourse)}
-    disabled={editCourse ? editThumbnailUploading : thumbnailUploading}
-  />
-
-  {editCourse ? (
-    editThumbnailUploading ? (
-      <small
-        style={{
-          color: 'var(--color-text-muted)',
-          marginTop: '0.5rem',
-          display: 'block',
-        }}
-      >
-        Uploading...
-      </small>
-    ) : (
-      editThumbnailUrl &&
-      editThumbnailUrl !== 'sample-thumbnail-url' && (
-        <div style={{ marginTop: '0.5rem' }}>
-          <img
-            src={editThumbnailUrl}
-            alt="Thumbnail preview"
-            style={{ maxWidth: '100px', borderRadius: '4px' }}
-          />
-          <small
-            style={{
-              color: 'var(--color-primary)',
-              display: 'block',
-            }}
-          >
-            Thumbnail uploaded!
-          </small>
-        </div>
-      )
-    )
-  ) : thumbnailUploading ? (
-    <small
-      style={{
-        color: 'var(--color-text-muted)',
-        marginTop: '0.5rem',
-        display: 'block',
-      }}
-    >
-      Uploading...
-    </small>
-  ) : (
-    thumbnailUrl &&
-    thumbnailUrl !== 'sample-thumbnail-url' && (
-      <div style={{ marginTop: '0.5rem' }}>
-        <img
-          src={thumbnailUrl}
-          alt="Thumbnail preview"
-          style={{ maxWidth: '100px', borderRadius: '4px' }}
-        />
-        <small
-          style={{
-            color: 'var(--color-primary)',
-            display: 'block',
-          }}
-        >
-          Thumbnail uploaded!
-        </small>
-      </div>
-    )
-  )}
-</div>
->>>>>>> 7f6d806be22c8458785b8234968453437ad3d14c
-              </div>
-              <div className="field full">
-                <label>Description</label>
-                <textarea required placeholder="Write a detailed description about what students will learn..." value={editCourse ? editDescription : description} onChange={(e) => editCourse ? setEditDescription(e.target.value) : setDescription(e.target.value)} />
-              </div>
-              <div className="field full" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                <button type="submit" className="btn primary" disabled={editCourse ? isUpdating : isSubmitting}>
-                  {editCourse ? (isUpdating ? 'Updating...' : 'Save Changes') : (isSubmitting ? 'Saving...' : 'Save & Publish Course')}
-                </button>
-                {editCourse && <button type="button" className="btn secondary" onClick={resetEditForm} style={{ minWidth: 'fit-content' }}>Cancel</button>}
-              </div>
-            </form>
-          </article>
-
-          {videoCourse && (
-            <article className="panel" style={{ marginTop: '2rem' }}>
-              <div className="section-head">
+          {videoCourse ? (
+            // Video Upload Form
+            <article className="panel">
+              <div className="section-head" style={{ marginBottom: '1rem' }}>
                 <div>
-                  <h3>Upload Video for {videoCourse.title}</h3>
+                  <h3>Upload Video to: {videoCourse.title}</h3>
                   <p>Attach a new lecture file to the selected course.</p>
                 </div>
+                <button className="btn" onClick={resetVideoForm}>Cancel</button>
               </div>
-              <form onSubmit={handleUploadVideo} className="form-grid">
+              <form className="form-grid" onSubmit={handleUploadVideo}>
                 <div className="field full">
                   <label>Video Title</label>
-                  <input required placeholder="e.g. Module 1: Introduction" value={videoTitle} onChange={(e) => setVideoTitle(e.target.value)} />
+                  <input type="text" value={videoTitle} onChange={e => setVideoTitle(e.target.value)} required />
                 </div>
                 <div className="field full">
-                  <label>Video Description</label>
-                  <textarea placeholder="e.g. Overview of course goals and content." value={videoDescription} onChange={(e) => setVideoDescription(e.target.value)} />
+                  <label>Description (Optional)</label>
+                  <textarea value={videoDescription} onChange={e => setVideoDescription(e.target.value)} rows="2"></textarea>
                 </div>
                 <div className="field full">
-                  <label>Video File</label>
-                  <input type="file" accept="video/*" onChange={(e) => setVideoFile(e.target.files[0])} />
+                  <label>Video File (MP4, MKV)</label>
+                  <input type="file" accept="video/*" onChange={e => setVideoFile(e.target.files[0])} required />
+                </div>
+                <div className="field full" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <input type="checkbox" id="freeVideo" checked={videoFree} onChange={e => setVideoFree(e.target.checked)} />
+                  <label htmlFor="freeVideo" style={{ margin: 0 }}>Free Preview Video</label>
+                </div>
+                <div className="field full">
+                  <button type="submit" className="btn primary" disabled={isUploadingVideo} style={{ width: '100%' }}>
+                    {isUploadingVideo ? 'Uploading Video (Please wait)...' : 'Upload Video'}
+                  </button>
+                </div>
+              </form>
+            </article>
+          ) : editCourse ? (
+            // Edit Course Form
+            <article className="panel">
+              <div className="section-head" style={{ marginBottom: '1rem' }}>
+                <h3>Edit Course</h3>
+                <button className="btn" onClick={resetEditForm}>Cancel</button>
+              </div>
+              <form className="form-grid" onSubmit={handleUpdateCourse}>
+                <div className="field full">
+                  <label>Course Name</label>
+                  <input type="text" value={editTitle} onChange={e => setEditTitle(e.target.value)} required />
+                </div>
+                <div className="field full">
+                  <label>Description</label>
+                  <textarea value={editDescription} onChange={e => setEditDescription(e.target.value)} required rows="3"></textarea>
                 </div>
                 <div className="field full">
                   <label>Video Thumbnail (Optional)</label>
@@ -518,17 +368,65 @@ const handleCreateCourse = async (e) => {
                   )}
                 </div>
                 <div className="field">
-                  <label><input type="checkbox" checked={videoFree} onChange={(e) => setVideoFree(e.target.checked)} />{' '}Free Video</label>
+                  <label>Price (₹)</label>
+                  <input type="number" value={editPrice} onChange={e => setEditPrice(e.target.value)} min="0" />
                 </div>
-                <div className="field full" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                  <button type="submit" className="btn primary" disabled={isUploadingVideo}>{isUploadingVideo ? 'Uploading...' : 'Upload Video'}</button>
-                  <button type="button" className="btn secondary" onClick={resetVideoForm}>Cancel</button>
+                <div className="field full">
+                  <label>Thumbnail Image</label>
+                  <input type="file" accept="image/*" onChange={(e) => handleThumbnailUpload(e, true)} disabled={editThumbnailUploading} />
+                  {editThumbnailUploading && <span style={{ fontSize: '0.8rem', color: 'var(--color-primary)' }}>Uploading...</span>}
+                  {editThumbnailUrl && !editThumbnailUploading && (
+                     <div style={{ marginTop: '0.5rem' }}>
+                       <img src={editThumbnailUrl} alt="Preview" style={{ width: '100px', borderRadius: '4px' }} />
+                     </div>
+                  )}
+                </div>
+                <div className="field full">
+                  <button type="submit" className="btn primary" disabled={isUpdating} style={{ width: '100%' }}>
+                    {isUpdating ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </div>
+              </form>
+            </article>
+          ) : (
+            // Create Course Form
+            <article className="panel">
+              <div className="section-head" style={{ marginBottom: '1rem' }}>
+                <h3>Create New Course</h3>
+              </div>
+              <form className="form-grid" onSubmit={handleCreateCourse}>
+                <div className="field full">
+                  <label>Course Name</label>
+                  <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. Master MERN Stack" required />
+                </div>
+                <div className="field full">
+                  <label>Description</label>
+                  <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Course details..." required rows="3"></textarea>
+                </div>
+                <div className="field">
+                  <label>Price (₹)</label>
+                  <input type="number" value={price} onChange={e => setPrice(e.target.value)} min="0" placeholder="0 for free" />
+                </div>
+                <div className="field full">
+                  <label>Thumbnail Image</label>
+                  <input type="file" accept="image/*" onChange={(e) => handleThumbnailUpload(e, false)} disabled={thumbnailUploading} />
+                  {thumbnailUploading && <span style={{ fontSize: '0.8rem', color: 'var(--color-primary)' }}>Uploading image...</span>}
+                  {thumbnailUrl && !thumbnailUploading && (
+                     <div style={{ marginTop: '0.5rem' }}>
+                       <img src={thumbnailUrl} alt="Preview" style={{ width: '100px', borderRadius: '4px' }} />
+                     </div>
+                  )}
+                </div>
+                <div className="field full">
+                  <button type="submit" className="btn primary" disabled={isSubmitting} style={{ width: '100%' }}>
+                    {isSubmitting ? 'Creating...' : 'Create Course'}
+                  </button>
                 </div>
               </form>
             </article>
           )}
         </div>
-      </section>
+      </div>
     </section>
   );
 };

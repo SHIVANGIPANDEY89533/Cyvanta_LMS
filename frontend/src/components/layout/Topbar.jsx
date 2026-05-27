@@ -1,16 +1,15 @@
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const Topbar = () => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   
-  const storedRole = localStorage.getItem('userRole');
-  const role = storedRole ? storedRole.toString().toUpperCase().replace(/^ROLE_/, '') : 'STUDENT';
-  const email = localStorage.getItem('userEmail') || 'User';
+  const role = (user?.role || '').toUpperCase().replace(/^ROLE_/, '');
+  const email = user?.email || 'User';
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userRole');
-    localStorage.removeItem('userEmail');
+    logout();
     navigate('/login');
   };
 

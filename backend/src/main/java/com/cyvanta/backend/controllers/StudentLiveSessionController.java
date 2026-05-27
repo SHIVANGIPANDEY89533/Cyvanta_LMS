@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/student")
+@RequestMapping("/api/student/live-sessions")
 @CrossOrigin("*")
 public class StudentLiveSessionController {
 
@@ -20,13 +20,19 @@ public class StudentLiveSessionController {
         this.liveSessionService = liveSessionService;
     }
 
-    @GetMapping("/courses/{courseId}/live-sessions")
+    @GetMapping("/upcoming")
+    public ResponseEntity<List<JoinLiveSessionResponse>> getUpcomingLiveSessions() {
+        List<LiveSession> sessions = liveSessionService.getAllLiveSessions(); // Ideally filter by status or time
+        return ResponseEntity.ok(sessions.stream().map(this::toResponse).collect(Collectors.toList()));
+    }
+
+    @GetMapping("/course/{courseId}")
     public ResponseEntity<List<JoinLiveSessionResponse>> getCourseLiveSessions(@PathVariable String courseId) {
         List<LiveSession> sessions = liveSessionService.getLiveSessionsByCourseId(courseId);
         return ResponseEntity.ok(sessions.stream().map(this::toResponse).collect(Collectors.toList()));
     }
 
-    @GetMapping("/live-sessions/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<JoinLiveSessionResponse> getLiveSessionById(@PathVariable String id) {
         return ResponseEntity.ok(toResponse(liveSessionService.getLiveSessionById(id)));
     }
@@ -34,8 +40,10 @@ public class StudentLiveSessionController {
     private JoinLiveSessionResponse toResponse(LiveSession session) {
         return new JoinLiveSessionResponse(
                 session.getId(),
-                session.getRoomName(),
-                session.getMeetingLink(),
+                session.getTitle(),
+                session.getDescription(),
+                session.getYoutubeUrl(),
+                session.getThumbnailUrl(),
                 session.getScheduledAt(),
                 session.getStatus(),
                 session.isRecordingAvailable()

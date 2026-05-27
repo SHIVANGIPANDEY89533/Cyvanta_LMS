@@ -63,8 +63,10 @@ public class LiveSessionController {
     private JoinLiveSessionResponse toResponse(LiveSession session) {
         return new JoinLiveSessionResponse(
                 session.getId(),
-                session.getRoomName(),
-                session.getMeetingLink(),
+                session.getTitle(),
+                session.getDescription(),
+                session.getYoutubeUrl(),
+                session.getThumbnailUrl(),
                 session.getScheduledAt(),
                 session.getStatus(),
                 session.isRecordingAvailable()

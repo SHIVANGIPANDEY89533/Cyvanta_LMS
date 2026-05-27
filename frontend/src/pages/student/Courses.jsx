@@ -75,6 +75,9 @@ const Courses = () => {
                         src={course.thumbnailUrl}
                         alt={course.title}
                         style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }}
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                        }}
                       />
                     )}
                   </div>

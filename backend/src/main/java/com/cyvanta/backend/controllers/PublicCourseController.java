@@ -1,8 +1,11 @@
 package com.cyvanta.backend.controllers;
 
 import com.cyvanta.backend.dto.CourseResponse;
+import com.cyvanta.backend.dto.VideoResponse;
 import com.cyvanta.backend.models.Course;
+import com.cyvanta.backend.models.Video;
 import com.cyvanta.backend.service.CourseService;
+import com.cyvanta.backend.service.VideoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,9 +17,11 @@ import java.util.stream.Collectors;
 @CrossOrigin("*")
 public class PublicCourseController {
     private final CourseService courseService;
+    private final VideoService videoService;
 
-    public PublicCourseController(CourseService courseService) {
+    public PublicCourseController(CourseService courseService, VideoService videoService) {
         this.courseService = courseService;
+        this.videoService = videoService;
     }
 
     @GetMapping
@@ -32,6 +37,27 @@ public class PublicCourseController {
     @GetMapping("/{id}")
     public ResponseEntity<CourseResponse> getCourseById(@PathVariable String id) {
         return ResponseEntity.ok(toResponse(courseService.getCourseById(id)));
+    }
+
+    @GetMapping("/{id}/videos")
+    public ResponseEntity<List<VideoResponse>> getCourseVideos(@PathVariable String id) {
+        // Find videos for the specific course
+        List<Video> videos = videoService.getVideosByCourseId(id);
+        return ResponseEntity.ok(
+                videos.stream()
+                        .map(video -> new VideoResponse(
+                                video.getId(),
+                                video.getCourseId(),
+                                video.getTitle(),
+                                video.getDescription(),
+                                video.getCloudinaryPublicId(),
+                                video.getSecureUrl(),
+                                video.isFreeVideo(),
+                                video.isPublished(),
+                                video.getCreatedAt()
+                        ))
+                        .collect(Collectors.toList())
+        );
     }
 
     private CourseResponse toResponse(Course course) {

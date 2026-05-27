@@ -8,7 +8,7 @@ const MainLayout = () => {
       <Sidebar />
       <main className="main-wrap">
         <Topbar />
-        <Outlet /> {/* <-- YEH BOHOT ZAROORI HAI */}
+        <Outlet />
       </main>
     </div>
   );

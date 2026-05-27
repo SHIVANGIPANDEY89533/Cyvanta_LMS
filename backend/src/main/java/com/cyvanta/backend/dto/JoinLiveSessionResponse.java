@@ -7,8 +7,10 @@ import java.time.LocalDateTime;
 public class JoinLiveSessionResponse {
 
     private String id;
-    private String roomName;
-    private String meetingLink;
+    private String title;
+    private String description;
+    private String youtubeUrl;
+    private String thumbnailUrl;
     private LocalDateTime scheduledAt;
     private LiveSessionStatus status;
     private boolean recordingAvailable;
@@ -16,10 +18,12 @@ public class JoinLiveSessionResponse {
     public JoinLiveSessionResponse() {
     }
 
-    public JoinLiveSessionResponse(String id, String roomName, String meetingLink, LocalDateTime scheduledAt, LiveSessionStatus status, boolean recordingAvailable) {
+    public JoinLiveSessionResponse(String id, String title, String description, String youtubeUrl, String thumbnailUrl, LocalDateTime scheduledAt, LiveSessionStatus status, boolean recordingAvailable) {
         this.id = id;
-        this.roomName = roomName;
-        this.meetingLink = meetingLink;
+        this.title = title;
+        this.description = description;
+        this.youtubeUrl = youtubeUrl;
+        this.thumbnailUrl = thumbnailUrl;
         this.scheduledAt = scheduledAt;
         this.status = status;
         this.recordingAvailable = recordingAvailable;
@@ -33,20 +37,36 @@ public class JoinLiveSessionResponse {
         this.id = id;
     }
 
-    public String getRoomName() {
-        return roomName;
+    public String getTitle() {
+        return title;
     }
 
-    public void setRoomName(String roomName) {
-        this.roomName = roomName;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getMeetingLink() {
-        return meetingLink;
+    public String getDescription() {
+        return description;
     }
 
-    public void setMeetingLink(String meetingLink) {
-        this.meetingLink = meetingLink;
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getYoutubeUrl() {
+        return youtubeUrl;
+    }
+
+    public void setYoutubeUrl(String youtubeUrl) {
+        this.youtubeUrl = youtubeUrl;
+    }
+
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
+    }
+
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
     }
 
     public LocalDateTime getScheduledAt() {

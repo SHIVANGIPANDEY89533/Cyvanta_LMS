@@ -131,8 +131,8 @@ public class DataSeeder implements CommandLineRunner {
             LiveSession liveSession = new LiveSession();
             liveSession.setCourseId(course.getId());
             liveSession.setTitle("Live Q&A Session");
-            liveSession.setRoomName("java-backend-live-room");
-            liveSession.setMeetingLink("https://meet.jit.si/java-backend-live-room");
+            liveSession.setDescription("This is a live session for Q&A.");
+            liveSession.setYoutubeUrl("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
             liveSession.setScheduledAt(LocalDateTime.now().plusDays(1));
             liveSession.setStatus(LiveSessionStatus.SCHEDULED);
             liveSession.setRecordingAvailable(false);

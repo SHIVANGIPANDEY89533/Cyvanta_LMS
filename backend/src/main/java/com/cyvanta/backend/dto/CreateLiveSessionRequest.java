@@ -6,8 +6,9 @@ public class CreateLiveSessionRequest {
 
     private String courseId;
     private String title;
-    private String roomName;
-    private String meetingLink;
+    private String description;
+    private String youtubeUrl;
+    private String thumbnailUrl;
     private String scheduledAt;
     private LiveSessionStatus status;
 
@@ -30,20 +31,28 @@ public class CreateLiveSessionRequest {
         this.title = title;
     }
 
-    public String getRoomName() {
-        return roomName;
+    public String getDescription() {
+        return description;
     }
 
-    public void setRoomName(String roomName) {
-        this.roomName = roomName;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getMeetingLink() {
-        return meetingLink;
+    public String getYoutubeUrl() {
+        return youtubeUrl;
     }
 
-    public void setMeetingLink(String meetingLink) {
-        this.meetingLink = meetingLink;
+    public void setYoutubeUrl(String youtubeUrl) {
+        this.youtubeUrl = youtubeUrl;
+    }
+
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
+    }
+
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
     }
 
     public String getScheduledAt() {

@@ -27,6 +27,7 @@ const Login = () => {
       const roleText = typeof rawRole === 'string'
         ? rawRole
         : rawRole?.name || rawRole?.authority || '';
+
       const normalizedRole = roleText
         ? roleText.toUpperCase().replace(/^ROLE_/, '')
         : 'STUDENT';
