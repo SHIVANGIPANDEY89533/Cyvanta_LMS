@@ -61,7 +61,7 @@ const Courses = () => {
                 'linear-gradient(135deg,#915eff,#4587f3)',
                 'linear-gradient(135deg,#e05263,#f78f8f)'
               ];
-              const hasThumb = course.thumbnailUrl && course.thumbnailUrl !== 'sample-thumbnail-url';
+              const hasThumb = course.thumbnailUrl && course.thumbnailUrl.trim() !== '' && course.thumbnailUrl !== 'sample-thumbnail-url';
               const bg = hasThumb ? `url(${course.thumbnailUrl}) center/cover` : gradients[idx % gradients.length];
 
               return (

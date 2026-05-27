@@ -65,6 +65,7 @@ public class AdminCourseController {
                 course.getTitle(),
                 course.getDescription(),
                 course.getThumbnailUrl(),
+                course.getYoutubePlaylistUrl(),
                 course.getPrice(),
                 course.isPublished(),
                 course.isFreeCourse(),

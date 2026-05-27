@@ -7,6 +7,7 @@ public class CourseResponse {
     private String title;
     private String description;
     private String thumbnailUrl;
+    private String youtubePlaylistUrl;
     private Double price;
     private boolean published;
     private boolean freeCourse;
@@ -14,11 +15,12 @@ public class CourseResponse {
 
     public CourseResponse() {}
 
-    public CourseResponse(String id, String title, String description, String thumbnailUrl, Double price, boolean published, boolean freeCourse, LocalDateTime createdAt) {
+    public CourseResponse(String id, String title, String description, String thumbnailUrl, String youtubePlaylistUrl, Double price, boolean published, boolean freeCourse, LocalDateTime createdAt) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.thumbnailUrl = thumbnailUrl;
+        this.youtubePlaylistUrl = youtubePlaylistUrl;
         this.price = price;
         this.published = published;
         this.freeCourse = freeCourse;
@@ -33,6 +35,8 @@ public class CourseResponse {
     public void setDescription(String description) { this.description = description; }
     public String getThumbnailUrl() { return thumbnailUrl; }
     public void setThumbnailUrl(String thumbnailUrl) { this.thumbnailUrl = thumbnailUrl; }
+    public String getYoutubePlaylistUrl() { return youtubePlaylistUrl; }
+    public void setYoutubePlaylistUrl(String youtubePlaylistUrl) { this.youtubePlaylistUrl = youtubePlaylistUrl; }
     public Double getPrice() { return price; }
     public void setPrice(Double price) { this.price = price; }
     public boolean isPublished() { return published; }

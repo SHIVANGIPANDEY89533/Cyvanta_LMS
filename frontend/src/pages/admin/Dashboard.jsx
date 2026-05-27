@@ -284,7 +284,7 @@ const AdminDashboard = () => {
             courses.map(course => (
               <article key={course.id} className="panel" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                 <img 
-                  src={course.thumbnailUrl && course.thumbnailUrl !== 'sample-thumbnail-url' ? course.thumbnailUrl : 'https://placehold.co/120x80/222/FFF?text=Course'} 
+                  src={(course.thumbnailUrl && course.thumbnailUrl.trim() !== '' && course.thumbnailUrl !== 'sample-thumbnail-url') ? course.thumbnailUrl : 'https://placehold.co/120x80/222/FFF?text=Course'} 
                   alt={course.title} 
                   style={{ width: '120px', height: '80px', objectFit: 'cover', borderRadius: '8px' }} 
                   onError={(e) => {
