@@ -50,14 +50,19 @@ const CourseDetails = () => {
   }
 
 
-  // Extract Playlist ID from URL
-  const extractPlaylistId = (url) => {
-    if (!url) return null;
-    const match = url.match(/[?&]list=([^&]+)/);
-    return match ? match[1] : (url.length < 40 ? url : null); // If short, assume it's an ID
+  // Extract Playlist or Video ID from URL
+  const extractYoutubeIds = (url) => {
+    if (!url) return { playlistId: null, videoId: null };
+    const listMatch = url.match(/[?&]list=([^&]+)/);
+    const videoMatch = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
+    
+    return {
+      playlistId: listMatch ? listMatch[1] : null,
+      videoId: videoMatch ? videoMatch[1] : (url.length === 11 ? url : null)
+    };
   };
 
-  const playlistId = extractPlaylistId(course.youtubePlaylistUrl);
+  const { playlistId, videoId } = extractYoutubeIds(course.youtubePlaylistUrl);
 
   return (
     <div className="view-panel" style={{ display: 'grid', gap: 'var(--space-6)' }}>
@@ -83,10 +88,10 @@ const CourseDetails = () => {
       <section style={{ maxWidth: '1000px', margin: '0 auto', width: '100%' }}>
         <article className="video-shell">
           <div className="video-frame" style={{ background: '#000', display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: '12px' }}>
-            {playlistId ? (
+            {(playlistId || videoId) ? (
               <iframe
                 style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }}
-                src={`https://www.youtube.com/embed/videoseries?list=${playlistId}`}
+                src={playlistId ? `https://www.youtube.com/embed/videoseries?list=${playlistId}` : `https://www.youtube.com/embed/${videoId}`}
                 title="YouTube video player"
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -94,13 +99,17 @@ const CourseDetails = () => {
               ></iframe>
             ) : (
               <div style={{ padding: '3rem', textAlign: 'center', color: '#666', position: 'absolute', top: '50%', transform: 'translateY(-50%)' }}>
-                <p>No YouTube Playlist attached to this course.</p>
+                <p>No valid YouTube link attached to this course.</p>
               </div>
             )}
           </div>
           <div className="course-body" style={{ marginTop: '1.5rem', padding: '0 1rem' }}>
-            <h4>Course Videos</h4>
-            <p className="muted">Use the playlist menu in the top right corner of the video player to see all videos in this course.</p>
+            <h4>Course Content</h4>
+            {playlistId ? (
+              <p className="muted">Use the playlist menu in the top right corner of the video player to see all videos in this course.</p>
+            ) : (
+              <p className="muted">Watch the course video above.</p>
+            )}
           </div>
         </article>
       </section>
