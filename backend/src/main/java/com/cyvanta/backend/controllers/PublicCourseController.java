@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/student/courses")
+@RequestMapping("/api/public/courses")
 @CrossOrigin("*")
 public class PublicCourseController {
     private final CourseService courseService;
